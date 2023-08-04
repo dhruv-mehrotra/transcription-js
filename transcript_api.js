@@ -4,7 +4,7 @@ const speech = require('@google-cloud/speech');
 // Creates a client
 const client = new speech.SpeechClient();
 
-async function quickstart() {
+async function quickstart(transcript_type) {
   // The path to the remote LINEAR16 file
   const gcsUri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw';
 
@@ -12,10 +12,48 @@ async function quickstart() {
   const audio = {
     uri: gcsUri,
   };
+
+  switch (transcript_type) {
+    case 'phone no':
+      speechContext = [{}];
+      break;
+    case 'address':
+      speechContext = [{}];
+      break;
+    case 'bank name':
+      speechContext = [{
+        "phrases": [
+          { "value": "HDFC", "boost": 20 },
+          { "value": "ICICI", "boost": 20 },
+        ]
+      }
+      ];
+      break;
+    case 'bank name':
+      speechContext = [{
+        "phrases": [
+          { "value": "HDFC", "boost": 20 },
+          { "value": "ICICI", "boost": 20 },
+        ]
+      }
+      ]
+      break;
+    case 'number':
+      speechContext = [{}];
+      break;
+    default:
+      speechContext = [{}];
+      break;
+  }
+
   const config = {
     encoding: 'LINEAR16',
     sampleRateHertz: 16000,
-    languageCode: 'en-US',
+    languageCode: 'hi-IN',
+    model: 'latest_long',
+    alternativeLanguageCodes: ['en-US'],
+    useEnhanced: true,
+    "speechContexts": speechContext,
   };
   const request = {
     audio: audio,
@@ -29,4 +67,4 @@ async function quickstart() {
     .join('\n');
   console.log(`Transcription: ${transcription}`);
 }
-quickstart();
+quickstart('phone no');
