@@ -4,7 +4,7 @@ const speech = require('@google-cloud/speech');
 // Creates a client
 const client = new speech.SpeechClient();
 
-async function quickstart(transcript_type) {
+async function transcribe(transcript_type) {
   // The path to the remote LINEAR16 file
   const gcsUri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw';
 
@@ -67,4 +67,23 @@ async function quickstart(transcript_type) {
     .join('\n');
   console.log(`Transcription: ${transcription}`);
 }
-quickstart('phone no');
+
+const { Configuration, OpenAIApi } = require("openai");
+require('dotenv').config()
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+async function cleanup (transcribed_text) {
+const completion = await openai.createCompletion({
+  model: "text-davinci-003",
+  prompt: "How are you today?",
+});
+console.log(transcribed_text);
+console.log(completion.data.choices[0].text);
+}
+
+transcribe('phone no');
+cleanup("some text");

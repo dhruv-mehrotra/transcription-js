@@ -1,0 +1,24 @@
+{
+  "name": "js_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "local_transcript_test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhruv-mehrotra/transcription-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dhruv-mehrotra/transcription-js/issues"
+  },
+  "homepage": "https://github.com/dhruv-mehrotra/transcription-js#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "openai": "^3.3.0"
+  }
+}
