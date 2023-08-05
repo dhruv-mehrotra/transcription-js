@@ -1,14 +1,20 @@
-// Imports the Google Cloud client library
+// Imports the Google Cloud client library and create a client
 const speech = require('@google-cloud/speech');
-
-// Creates a client
 const client = new speech.SpeechClient();
 
-async function transcribe(transcript_type) {
-  // The path to the remote LINEAR16 file
-  const gcsUri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw';
+const { Configuration, OpenAIApi } = require("openai");
+require('dotenv').config()
 
-  // The audio file's encoding, sample rate in hertz, and BCP-47 language code
+// Set openai api configuration
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+
+// Transcription function
+async function transcribe(transcript_type) {
+  const gcsUri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw';
   const audio = {
     uri: gcsUri,
   };
@@ -66,24 +72,17 @@ async function transcribe(transcript_type) {
     .map(result => result.alternatives[0].transcript)
     .join('\n');
   console.log(`Transcription: ${transcription}`);
+  cleanup(transcription + " ABC-123, Thomas Lane, New Delhi");
 }
 
-const { Configuration, OpenAIApi } = require("openai");
-require('dotenv').config()
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
-async function cleanup (transcribed_text) {
-const completion = await openai.createCompletion({
-  model: "text-davinci-003",
-  prompt: "How are you today?",
-});
-console.log(transcribed_text);
-console.log(completion.data.choices[0].text);
+// Transcription cleanup function
+async function cleanup(transcribed_text) {
+  const completion = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: "Reply only with a well formatted address, no other words by extracting an address from the given text: " + transcribed_text,
+  });
+  console.log(transcribed_text);
+  console.log(completion.data.choices[0].text);
 }
 
-transcribe('phone no');
-cleanup("some text");
+transcribe('address');
